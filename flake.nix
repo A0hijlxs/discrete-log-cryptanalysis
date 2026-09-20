@@ -17,8 +17,7 @@
 
                     shellHook = ''
                         export PYTHONPATH="$PWD:$PYTHONPATH"
-                        echo "SageMath devShell ready. Run tests with 'sage -t tests/' or benchmarks with 'sage benchmarks/bench_dlp.py'."
-                        echo "Type-check with: pyright --pythonpath \"\$(sage --python -c 'import sys; print(sys.executable)')\""
+                        echo "SageMath devShell ready. Run tests with 'sage --python -m pytest tests/' or benchmarks with 'sage benchmarks/bench_dlp.py'."
                     '';
                 };
             });
