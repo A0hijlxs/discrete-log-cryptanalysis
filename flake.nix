@@ -13,11 +13,12 @@
             in
                 {
                 devShells.default = pkgs.mkShell {
-                    packages = [ pkgs.sage ];
+                    packages = [ pkgs.sage pkgs.pyright ];
 
                     shellHook = ''
                         export PYTHONPATH="$PWD:$PYTHONPATH"
                         echo "SageMath devShell ready. Run tests with 'sage -t tests/' or benchmarks with 'sage benchmarks/bench_dlp.py'."
+                        echo "Type-check with: pyright --pythonpath \"\$(sage --python -c 'import sys; print(sys.executable)')\""
                     '';
                 };
             });

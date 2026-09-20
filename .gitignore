@@ -1,2 +1,15 @@
-.private/
 .direnv/
+.private/
+
+# Python / Sage artifacts
+__pycache__/
+*.py[cod]
+*.sage.py
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor / OS
+.vscode/
+.DS_Store

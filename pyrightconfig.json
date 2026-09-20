@@ -1,0 +1,8 @@
+{
+  "include": ["dlp", "attacks", "crypto", "benchmarks", "tests"],
+  "exclude": ["**/__pycache__", ".direnv", ".private", "notebook"],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportAssignmentType": "warning",
+  "reportOperatorIssue": "warning"
+}
