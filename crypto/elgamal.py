@@ -11,6 +11,8 @@ def is_prime_basic(p, q, primes):
         bool: False if p or q is divisible by any small prime; otherwise True.
     """
     for prime in primes:
+        if prime == p or prime == q:
+            continue
         if q % prime == 0 or p % prime == 0:
             return False
     return True
