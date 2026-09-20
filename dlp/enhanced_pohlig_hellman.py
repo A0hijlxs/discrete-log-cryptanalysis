@@ -1,3 +1,10 @@
+"""Pohlig-Hellman with Pollard's rho substituted for brute-force subgroup search.
+
+Reduces each prime-power subgroup discrete log from O(q) to O(sqrt(q)) for
+q > 100, roughly doubling the practically tractable bit length versus plain
+pohlig_hellman (see the README/benchmarks for the measured comparison).
+"""
+
 from sage.all import GF, factor, crt
 from dlp.pollard_rho import pollard_rho
 
@@ -24,7 +31,7 @@ def enhanced_pohlig_hellman(p, g, h):
 
     q_max = max(p for p, _ in factors) # Largest prime factor of p - 1
     B = 50 # Bound on maximum bit length for q_max
-    
+
     if q_max >= 2 ** B: # Check q is within bound B
         print(f'Input Error: Largest factor of p-1 larger than 2^{B}')
         return None
@@ -34,7 +41,7 @@ def enhanced_pohlig_hellman(p, g, h):
 
     # Solves for x (mod q^e)
     for q, e in factors:
-        x = 0 # x = x_0 + x_1 * q + ... + x_e-1 * q^e-1 
+        x = 0 # x = x_0 + x_1 * q + ... + x_e-1 * q^e-1
         h_current = h # Value of h adjusted for each x_i
         rhs = g ** (phi // q) # rhs constant for each x_i
 
@@ -43,7 +50,7 @@ def enhanced_pohlig_hellman(p, g, h):
             lhs = h_current ** (phi // (q ** (i + 1))) # lhs adjusted for each x_i
             x_i = None
 
-            # Solves lhs = rhs^x_i (mod p) for x_i -> [0, q)   
+            # Solves lhs = rhs^x_i (mod p) for x_i -> [0, q)
             if q > 100:
                 # If q large we use pollard rho in subgroup of order q
                 x_i = pollard_rho(p, rhs, lhs, q)
@@ -67,6 +74,6 @@ def enhanced_pohlig_hellman(p, g, h):
         # Saves x (mod q^e)
         remainders.append(x)
         moduli.append(q ** e)
-        
+
     # Solves linear congruence x (mod q_1^e_1) ... x (mod q_n^e_n) = x (mod p - 1)
     return crt(remainders, moduli)

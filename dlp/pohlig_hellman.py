@@ -1,3 +1,9 @@
+"""Pohlig-Hellman algorithm for the discrete logarithm problem.
+
+Brute-forces each prime-power subgroup discrete log directly, so runtime is
+dominated by the largest prime factor of p - 1 (guarded at 2^25 below).
+"""
+
 from sage.all import factor, crt, GF
 
 def pohlig_hellman(p, g, h):
@@ -22,7 +28,7 @@ def pohlig_hellman(p, g, h):
 
     q_max = max(p for p, _ in factors) # Largest prime factor of p - 1
     B = 25 # Bound on maximum bit length for q_max
-    
+
     if q_max >= 2 ** B: # Check q is within bound B
         print(f'Input Error: Largest factor of p - 1 larger than 2^{B}')
         return None
@@ -32,7 +38,7 @@ def pohlig_hellman(p, g, h):
 
     # Solves for x (mod q^e)
     for q, e in factors:
-        x = 0 # x = x_0 + x_1 * q + ... + x_e-1 * q^e-1 
+        x = 0 # x = x_0 + x_1 * q + ... + x_e-1 * q^e-1
         h_current = h # Value of h adjusted for each x_i
         rhs = g ** (phi // q) # rhs constant for each x_i
 
@@ -41,7 +47,7 @@ def pohlig_hellman(p, g, h):
             lhs = h_current ** (phi // (q ** (i + 1))) # lhs adjusted for each x_i
             x_i = None
 
-            # Efficiently brute forces lhs = rhs^x_i (mod p) for x_i -> [0, q)   
+            # Efficiently brute forces lhs = rhs^x_i (mod p) for x_i -> [0, q)
             rhs_j = F(1) # Start with rhs^0 (j = 0)
             for j in range(q):
                 if lhs == rhs_j:
@@ -60,6 +66,6 @@ def pohlig_hellman(p, g, h):
         # Saves x (mod q^e)
         remainders.append(x)
         moduli.append(q ** e)
-        
+
     # Solves linear congruence x (mod q_1^e_1) ... x (mod q_n^e_n) = x (mod p - 1)
     return crt(remainders, moduli)

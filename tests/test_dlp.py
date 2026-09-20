@@ -1,3 +1,5 @@
+"""Correctness tests for the five DLP algorithms against a known small instance."""
+
 from sage.all import GF
 
 from dlp.pohlig_hellman import pohlig_hellman

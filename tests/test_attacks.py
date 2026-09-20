@@ -1,3 +1,5 @@
+"""Correctness tests for the ElGamal key-recovery and Hastad broadcast attacks."""
+
 from attacks.elgamal_key_recovery import p, g, pk, key_recovery_attack
 from attacks.hastad_broadcast import main as hastad_main
 

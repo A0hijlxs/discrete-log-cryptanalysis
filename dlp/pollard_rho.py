@@ -1,7 +1,14 @@
+"""Pollard's rho algorithm for the discrete logarithm problem.
+
+Floyd's cycle detection over a pseudorandom walk; O(sqrt(ell)) time with
+O(1) space, unlike BSGS's O(sqrt(ell)) space. Only valid for prime-order
+subgroups -- reduce composite-order instances via Pohlig-Hellman first.
+"""
+
 from sage.all import GF, is_prime, ZZ
 
 def pollard_rho(p, g, h, ell):
-    '''
+    """
     Pollard's rho algorithm to solve h = g^x (mod p).
     Inputs:
         p (int): Prime modulus
@@ -11,7 +18,7 @@ def pollard_rho(p, g, h, ell):
     Returns:
         x (int): Discrete log solution
         None: If no solution is found
-    '''
+    """
 
     # Ensure ell is prime
     if not is_prime(ell):
@@ -28,7 +35,7 @@ def pollard_rho(p, g, h, ell):
         1: lambda x, a, b: (x * h, a, b + 1), # x <- S_2
         2: lambda x, a, b: (x * x, 2 * a, 2 * b) # x <- S_3
     }
-        
+
     P = GF(p) # Initialize finite field for whole group
     L = GF(ell) # Initialize finite field for subgroup
 
@@ -38,9 +45,9 @@ def pollard_rho(p, g, h, ell):
     # Use Floyd's cycle finding algorithm to find collision between tortoise and hare
     for i in range(1, ell):
         # Step tortoise once
-        xi, ai, bi = step[ZZ(xi) % 3](xi, ai, bi) 
+        xi, ai, bi = step[ZZ(xi) % 3](xi, ai, bi)
         # Step hare twice
-        Xi, Ai, Bi = step[ZZ(Xi) % 3](Xi, Ai, Bi) 
+        Xi, Ai, Bi = step[ZZ(Xi) % 3](Xi, Ai, Bi)
         Xi, Ai, Bi = step[ZZ(Xi) % 3](Xi, Ai, Bi)
 
         # Check for collision
@@ -49,9 +56,9 @@ def pollard_rho(p, g, h, ell):
             if bi == Bi:
                 print('Error: Invalid Collision')
                 return None
-            
+
             # Compute the discrete logarithm
-            rhs = Ai - ai 
+            rhs = Ai - ai
             lhs = bi - Bi
             return int(rhs / lhs)
 

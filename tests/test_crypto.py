@@ -1,3 +1,5 @@
+"""Correctness tests for the ElGamal scheme, finite-field DH demo, and CTR/XOR recovery."""
+
 from crypto.elgamal import (
     generate_safe_prime,
     generate_public_parameters,

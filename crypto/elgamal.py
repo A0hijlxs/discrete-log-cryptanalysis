@@ -1,3 +1,13 @@
+"""A correct ElGamal signature scheme, plus safe-prime parameter generation.
+
+Unlike attacks/elgamal_key_recovery.py's vulnerable oracle, elgamal_sign
+below samples its nonce uniformly and checks invertibility mod p - 1.
+generate_safe_prime/generate_public_parameters produce safe primes
+p = 2q + 1 (and a generator of the order-q subgroup) so that Enhanced
+Pohlig-Hellman and index calculus are infeasible against the result --
+see the README for why proper parameterization defeats those attacks.
+"""
+
 from sage.all import GF, ZZ, randint, gcd, inverse_mod, is_prime, randrange, is_pseudoprime, prime_range
 
 def is_prime_basic(p, q, primes):
@@ -12,7 +22,7 @@ def is_prime_basic(p, q, primes):
     """
     for prime in primes:
         if prime == p or prime == q:
-            continue
+            continue # a prime is divisible by itself; that's not compositeness
         if q % prime == 0 or p % prime == 0:
             return False
     return True
@@ -30,7 +40,7 @@ def generate_safe_prime(bit_length):
     while True:
         q = randrange(2**(bit_length - 2), 2**(bit_length - 1))
         p = 2 * q + 1
-        
+
         if is_prime_basic(p, q, primes): # Test 1
             if is_pseudoprime(p) and is_pseudoprime(q): # Test 2
                 if is_prime(p) and is_prime(q): # Test 3
@@ -38,14 +48,14 @@ def generate_safe_prime(bit_length):
 
 
 def generate_public_parameters(p, q, reduced):
-    '''
+    """
     Inputs:
         p (int): Prime p
         q (int): Prime q, divisor of p - 1
         reduced (bool) : Whether to reduce generator g to order q
     Returns:
-        g (int): Generator g either of order p - 1 or q. 
-    '''
+        g (int): Generator g either of order p - 1 or q.
+    """
     P = GF(p)
     g = P.multiplicative_generator()
     if reduced:
@@ -113,6 +123,7 @@ def elgamal_verify(p, g, m, pk, signature):
 
 
 def main():
+    """Demo: two parties sign the same message and cross-verify signatures."""
     p, q = generate_safe_prime(1024) # Safe prime p = 2q + 1
     g = generate_public_parameters(p, q, True) # Public parameters
     m = randint(1, p - 1) # Message to be signed

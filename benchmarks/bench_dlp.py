@@ -101,8 +101,8 @@ def prime_subgroup_instance(bits):
     return p, g, h, x, q
 
 
-def log_row(writer, f, algorithm, bits, elapsed, success, timed_out, peak_mb=""):
-    writer.writerow([algorithm, bits, elapsed, success, timed_out, peak_mb])
+def log_row(writer, f, algorithm, bits, elapsed, success, timed_out, peak_mb=None):
+    writer.writerow([algorithm, bits, elapsed, success, timed_out, peak_mb if peak_mb is not None else ""])
     f.flush()
 
 
